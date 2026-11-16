@@ -1,7 +1,9 @@
 use std::env;
 use std::fs;
+use std::path::Path;
 
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
+use foto_reveal::limpieza::limpiar_jpeg;
 use foto_reveal::{analizar_bytes, Revelacion};
 
 fn mostrar(r: &Revelacion) {
@@ -25,15 +27,36 @@ fn mostrar(r: &Revelacion) {
     }
 }
 
-fn main() -> Result<()> {
-    let ruta = env::args()
-        .nth(1)
-        .context("Uso: foto-reveal <ruta-de-la-foto>")?;
-
-    let datos = fs::read(&ruta).with_context(|| format!("No se pudo abrir {ruta}"))?;
-    let revelacion = analizar_bytes(&datos)?;
-
-    mostrar(&revelacion);
-
+fn revelar(ruta: &str) -> Result<()> {
+    let datos = fs::read(ruta).with_context(|| format!("No se pudo abrir {ruta}"))?;
+    mostrar(&analizar_bytes(&datos)?);
     Ok(())
+}
+
+fn limpiar(ruta: &str) -> Result<()> {
+    let datos = fs::read(ruta).with_context(|| format!("No se pudo abrir {ruta}"))?;
+    let limpio = limpiar_jpeg(&datos)?;
+
+    let origen = Path::new(ruta);
+    let nombre = origen
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("foto");
+    let destino = origen.with_file_name(format!("{nombre}_limpia.jpg"));
+
+    fs::write(&destino, limpio)
+        .with_context(|| format!("No se pudo guardar {}", destino.display()))?;
+    println!("Foto limpia guardada en {}", destino.display());
+    Ok(())
+}
+
+fn main() -> Result<()> {
+    let args: Vec<String> = env::args().skip(1).collect();
+    match args.as_slice() {
+        [ruta] => revelar(ruta),
+        [orden, ruta] if orden == "limpiar" => limpiar(ruta),
+        _ => bail!(
+            "Uso:\n  foto-reveal <foto>              muestra lo que cuenta la foto\n  foto-reveal limpiar <foto.jpg>  guarda una copia sin metadatos"
+        ),
+    }
 }
