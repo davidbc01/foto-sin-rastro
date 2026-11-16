@@ -1,3 +1,5 @@
+pub mod formatos;
+pub mod heic;
 pub mod limpieza;
 
 use std::io::Cursor;

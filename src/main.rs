@@ -3,7 +3,7 @@ use std::fs;
 use std::path::Path;
 
 use anyhow::{bail, Context, Result};
-use foto_reveal::limpieza::limpiar_jpeg;
+use foto_reveal::formatos::limpiar as limpiar_foto;
 use foto_reveal::{analizar_bytes, Revelacion};
 
 fn mostrar(r: &Revelacion) {
@@ -35,14 +35,14 @@ fn revelar(ruta: &str) -> Result<()> {
 
 fn limpiar(ruta: &str) -> Result<()> {
     let datos = fs::read(ruta).with_context(|| format!("No se pudo abrir {ruta}"))?;
-    let limpio = limpiar_jpeg(&datos)?;
+    let (limpio, extension) = limpiar_foto(&datos)?;
 
     let origen = Path::new(ruta);
     let nombre = origen
         .file_stem()
         .and_then(|s| s.to_str())
         .unwrap_or("foto");
-    let destino = origen.with_file_name(format!("{nombre}_limpia.jpg"));
+    let destino = origen.with_file_name(format!("{nombre}_limpia.{extension}"));
 
     fs::write(&destino, limpio)
         .with_context(|| format!("No se pudo guardar {}", destino.display()))?;
@@ -56,7 +56,7 @@ fn main() -> Result<()> {
         [ruta] => revelar(ruta),
         [orden, ruta] if orden == "limpiar" => limpiar(ruta),
         _ => bail!(
-            "Uso:\n  foto-reveal <foto>              muestra lo que cuenta la foto\n  foto-reveal limpiar <foto.jpg>  guarda una copia sin metadatos"
+            "Uso:\n  foto-reveal <foto>                muestra lo que cuenta la foto\n  foto-reveal limpiar <foto>        guarda una copia sin metadatos (JPG o HEIC)"
         ),
     }
 }
