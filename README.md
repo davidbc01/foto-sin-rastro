@@ -15,7 +15,11 @@ Las fotos que haces con el móvil llevan datos ocultos: el modelo del teléfono,
 1. **Te enseña** lo que cuenta tu foto.
 2. **Te da una copia limpia**, sin esos datos.
 
-Todo ocurre en tu ordenador. El programa no usa la red.
+Todo ocurre en tu dispositivo y no se sube nada. Puedes usarlo [en la web](https://davidbc01.github.io/foto-sin-rastro/) o como programa de línea de comandos.
+
+## Pruébalo sin instalar nada
+
+**[davidbc01.github.io/foto-sin-rastro](https://davidbc01.github.io/foto-sin-rastro/)**: arrastra una foto y mira qué esconde. Funciona entera en tu navegador (el mismo código Rust, compilado a WebAssembly), así que la foto no se sube a ningún servidor.
 
 ## Ejemplo
 
@@ -24,7 +28,7 @@ $ sin-rastro foto.jpg
 Lo que tu foto cuenta de ti
 ----------------------------
 Móvil o cámara: Apple iPhone 15
-Fecha: 2026:05:03 18:21:07
+Fecha: 03/05/2026 18:21:07
 Ubicación: 40.416944, -3.703333
 Mapa: https://www.openstreetmap.org/?mlat=40.416944&mlon=-3.703333#map=17/40.416944/-3.703333
 
@@ -34,7 +38,7 @@ Foto limpia guardada en foto_limpia.jpg
 
 El enlace del mapa es solo texto. Si lo abres en el navegador, tu navegador sí contacta con OpenStreetMap y le llegan esas coordenadas.
 
-## Instalación
+## Instalación del programa de línea de comandos
 
 Necesitas [Rust](https://rustup.rs). Desde la carpeta del proyecto:
 
@@ -74,7 +78,9 @@ Conviene ser claros con las limitaciones:
 
 ## Privacidad
 
-El programa no usa la red y solo tiene dos dependencias (`anyhow` y `kamadak-exif`). Puedes comprobarlo leyendo el código y `Cargo.toml`.
+El programa de línea de comandos no usa la red y solo tiene dos dependencias (`anyhow` y `kamadak-exif`). Puedes comprobarlo leyendo el código y `Cargo.toml`.
+
+La web ejecuta ese mismo código en tu navegador y la foto no se sube a ningún sitio. La capa para el navegador añade una dependencia más, `wasm-bindgen`, que solo se usa al compilar para WebAssembly. Lo único que contacta con otro servidor es el botón «Ver ese punto en un mapa», que abre OpenStreetMap, y solo si lo pulsas y aceptas el aviso.
 
 ## Desarrollo
 
@@ -88,7 +94,28 @@ cargo test
 | `src/limpieza.rs` | Limpia JPG |
 | `src/heic.rs` | Limpia HEIC |
 | `src/formatos.rs` | Detecta el formato y elige cómo limpiar |
+| `src/web.rs` | Capa para el navegador (WebAssembly) |
 | `src/main.rs` | La línea de comandos |
+| `web/index.html`, `web/app.js` | La página y su lógica |
+| `web/src/estilos.css` | Estilos propios y tema de Tailwind |
+| `scripts/iconos.mjs` | Genera el sprite con los iconos de Lucide |
+
+### Desarrollo de la web
+
+La web vive en `web/` y reutiliza el mismo código Rust compilado a WebAssembly, con Tailwind CSS y iconos de Lucide.
+
+Necesitas Rust, el target de WebAssembly, `wasm-bindgen-cli` (con la misma versión que figure en `Cargo.lock`) y Node 22:
+
+```
+rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli --version 0.2.130
+cargo build --lib --target wasm32-unknown-unknown --release --features web
+wasm-bindgen --target web --out-dir web/pkg target/wasm32-unknown-unknown/release/foto_sin_rastro.wasm
+npm install
+npm run dev
+```
+
+La web queda en `http://localhost:3000`. Cada push a `master` la publica en GitHub Pages con la Action de `.github/workflows/pages.yml`.
 
 ## Licencia
 
