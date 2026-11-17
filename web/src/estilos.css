@@ -89,6 +89,7 @@ html[data-tema="oscuro"] {
   body { @apply bg-papel font-sans text-[1.06rem] leading-[1.7] text-tinta transition-colors duration-300; }
   button { cursor: pointer; font-family: inherit; }
   :focus-visible { outline: 3px solid var(--tinta); outline-offset: 3px; }
+  ::selection { background: var(--amarillo); color: #1b1a17; }
   [id] { scroll-margin-top: 5rem; }
   .oculto { display: none !important; }
 
