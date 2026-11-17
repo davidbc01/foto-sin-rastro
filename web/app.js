@@ -1,4 +1,4 @@
-import init, { revelar, limpiar } from "./pkg/foto_sin_rastro.js";
+import init, { revelar, limpiar, version } from "./pkg/foto_sin_rastro.js";
 
 const $ = (id) => document.getElementById(id);
 const zona = $("zona");
@@ -6,9 +6,12 @@ const entrada = $("archivo");
 
 let urlVista = null;
 let urlDescarga = null;
-let niveles = {}; // nivel de cada fila: alto | medio | nada
 
 await init();
+
+// Versión leída del propio motor Rust
+const v = "v" + version();
+document.querySelectorAll(".ver").forEach((el) => (el.textContent = v));
 
 // ---------- entrada de la foto ----------
 zona.addEventListener("click", () => entrada.click());
@@ -36,7 +39,6 @@ entrada.addEventListener("change", () => {
 $("otra").addEventListener("click", () => {
   $("resultado").classList.add("oculto");
   zona.classList.remove("oculto");
-  window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 // ---------- utilidades ----------
@@ -49,35 +51,37 @@ function esJpg(bytes) {
   return bytes[0] === 0xff && bytes[1] === 0xd8;
 }
 
-// Siempre textContent: los metadatos de una foto no son de fiar.
-function fila(clave, texto, nivel) {
-  const el = $("fila-" + clave);
-  const valor = { movil: "movil", fecha: "fecha", ubic: "ubicacion" }[clave];
-  el.className = "fila " + nivel;
-  $(valor).textContent = texto;
-  $("chip-" + clave).textContent =
-    nivel === "alto" ? "Te delata" : nivel === "medio" ? "Se ve" : "No consta";
-  niveles[clave] = nivel;
+// "16/11/2026 19:36:30" -> ["el 16/11/2026", "19:36:30"]
+function partirFecha(texto) {
+  const m = /^(\S+) (\S+)$/.exec(texto);
+  return m ? `${m[1]} a las ${m[2]}` : texto;
 }
 
-function veredicto(nivel, texto, porcentaje) {
-  const n = $("nivel");
-  n.className = nivel;
-  n.textContent =
-    nivel === "alto" ? "EXPOSICIÓN ALTA"
-    : nivel === "medio" ? "EXPOSICIÓN MEDIA"
-    : nivel === "limpio" ? "LIMPIA"
-    : "EXPOSICIÓN BAJA";
-  $("veredicto").textContent = texto;
-  const m = $("medidor");
-  m.style.width = porcentaje + "%";
-  m.style.background =
-    nivel === "alto" ? "var(--rojo)" : nivel === "medio" ? "var(--ambar)" : "var(--verde)";
+// Siempre textContent: los metadatos de una foto no son de fiar.
+function linea(prefijo, dato, sufijo, vacio, nivel) {
+  const li = document.createElement("li");
+  if (dato) {
+    li.className = nivel;
+    const s = document.createElement("span");
+    s.className = "dato";
+    s.textContent = dato;
+    li.append(prefijo, s, sufijo);
+  } else {
+    li.className = "nada";
+    li.textContent = vacio;
+  }
+  return li;
+}
+
+function resumen(texto, clase) {
+  const r = $("resumen");
+  r.className = clase;
+  r.textContent = texto;
 }
 
 function ponerVista(archivo, bytes) {
-  const caja = $("foto");
-  caja.querySelectorAll("img, .sinvista").forEach((x) => x.remove());
+  const marco = $("marco");
+  marco.replaceChildren();
   if (urlVista) URL.revokeObjectURL(urlVista);
   urlVista = null;
 
@@ -86,18 +90,14 @@ function ponerVista(archivo, bytes) {
     const img = document.createElement("img");
     img.alt = "Vista previa de tu foto (solo en tu navegador)";
     img.src = urlVista;
-    caja.prepend(img);
+    marco.append(img);
   } else {
     const d = document.createElement("div");
     d.className = "sinvista";
-    const b = document.createElement("b");
-    b.textContent = "HEIC";
-    d.append(b, "Tu navegador no sabe mostrar este formato, pero lo analizamos igual.");
-    caja.prepend(d);
+    d.textContent =
+      "Tu navegador no sabe enseñar fotos HEIC, pero la hemos analizado igual.";
+    marco.append(d);
   }
-  caja.classList.remove("escaneando");
-  void caja.offsetWidth; // reinicia la animación
-  caja.classList.add("escaneando");
 }
 
 // ---------- análisis ----------
@@ -114,34 +114,38 @@ async function procesar(archivo) {
   zona.classList.add("oculto");
   $("resultado").classList.remove("oculto");
   $("titulo").textContent = archivo.name;
+  $("intro").textContent = "Esto es lo que esta foto le cuenta a quien la reciba:";
   $("mapa").classList.add("oculto");
   $("mapa").onclick = null;
   $("descargar").disabled = false;
-  $("descargar").textContent = "Limpiar y descargar";
-  niveles = {};
+  $("descargar").textContent = "Quitar todo y descargar";
+  $("nota").textContent = "";
   ponerVista(archivo, bytes);
 
   const lat = info?.latitud;
   const lon = info?.longitud;
   const hayUbic = lat !== undefined && lon !== undefined;
   const movil = info ? [info.marca, info.modelo].filter(Boolean).join(" ") : "";
-  const fecha = info?.fecha ?? "";
+  const fecha = info?.fecha ? partirFecha(info.fecha) : "";
 
-  fila("movil", movil || "No consta", movil ? "medio" : "nada");
-  fila("fecha", fecha || "No consta", fecha ? "medio" : "nada");
-  fila(
-    "ubic",
-    hayUbic ? `${lat.toFixed(5)}, ${lon.toFixed(5)}` : "No consta",
-    hayUbic ? "alto" : "nada"
+  const lista = $("lista");
+  lista.replaceChildren(
+    linea("La hiciste con ", movil, ".", "No dice con qué móvil se hizo.", "medio"),
+    linea("La hiciste el ", fecha, ".", "No lleva fecha ni hora.", "medio"),
+    linea(
+      "Estabas en las coordenadas ",
+      hayUbic ? `${lat.toFixed(5)}, ${lon.toFixed(5)}` : "",
+      ".",
+      "No lleva ubicación.",
+      "alto"
+    )
   );
 
   if (hayUbic) {
-    veredicto(
-      "alto",
-      "Quien reciba esta foto tal cual puede saber dónde se hizo, con margen de metros.",
-      92
+    resumen(
+      "Con esto, cualquiera que reciba la foto tal cual puede saber dónde estabas, con margen de metros.",
+      "alto"
     );
-    $("nota").textContent = "";
     $("mapa").classList.remove("oculto");
     $("mapa").onclick = () => {
       const ok = confirm(
@@ -157,12 +161,11 @@ async function procesar(archivo) {
       }
     };
   } else if (movil || fecha) {
-    veredicto("medio", "No lleva ubicación, pero sí dice con qué móvil y cuándo la hiciste.", 45);
-    $("nota").textContent = "";
+    resumen("No lleva ubicación, pero sí cuenta con qué móvil y cuándo la hiciste.", "");
   } else {
-    veredicto("bajo", "No hemos encontrado datos ocultos legibles en esta foto.", 8);
+    resumen("No hemos encontrado datos ocultos legibles en esta foto.", "");
     $("nota").textContent =
-      "Si el archivo no es un JPG/HEIC válido, la limpieza dará un aviso.";
+      "Si el archivo no es un JPG o un HEIC válido, al limpiar te avisaremos.";
   }
 
   $("descargar").onclick = () => descargar(archivo, bytes);
@@ -189,25 +192,18 @@ function descargar(archivo, bytes) {
   a.click();
   a.remove();
 
-  // Tachado visual de lo que había
-  for (const [clave, nivel] of Object.entries(niveles)) {
-    if (nivel === "nada") continue;
-    const el = $("fila-" + clave);
-    const valor = $({ movil: "movil", fecha: "fecha", ubic: "ubicacion" }[clave]);
-    const largo = Math.min(Math.max(valor.textContent.length, 8), 22);
-    el.className = "fila borrado";
-    valor.textContent = "█".repeat(largo);
-    $("chip-" + clave).textContent = "Borrado";
-  }
+  // Tachado con rotulador negro
+  document.querySelectorAll("#lista .dato").forEach((s) => {
+    const largo = Math.min(Math.max(s.textContent.length, 8), 24);
+    s.textContent = "x".repeat(largo);
+    s.classList.add("tachado");
+  });
 
+  $("intro").textContent = "Esto es lo que ya no podrá contar:";
   $("mapa").classList.add("oculto");
   $("descargar").textContent = "Descargada ✓";
   $("descargar").disabled = true;
-  veredicto(
-    "limpio",
-    "Copia limpia descargada. Comparte esa, no la original.",
-    4
-  );
+  resumen("Copia limpia descargada. Envía esa, no la original.", "limpio");
   $("nota").textContent =
     "La original sigue intacta en tu dispositivo: bórrala si ya no la necesitas.";
 }

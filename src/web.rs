@@ -88,3 +88,9 @@ pub fn limpiar(datos: &[u8]) -> Result<Limpio, JsError> {
         extension: extension.to_string(),
     })
 }
+
+/// Versión del programa, tal como figura en Cargo.toml.
+#[wasm_bindgen]
+pub fn version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
