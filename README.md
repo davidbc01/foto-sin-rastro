@@ -1,5 +1,7 @@
 # foto-sin-rastro
 
+[![CI](https://github.com/davidbc01/foto-sin-rastro/actions/workflows/ci.yml/badge.svg)](https://github.com/davidbc01/foto-sin-rastro/actions/workflows/ci.yml)
+
 > Tu foto cuenta más de lo que crees.
 
 Las fotos que haces con el móvil llevan datos ocultos: el modelo del teléfono, la fecha y la hora exactas y, si tenías la ubicación activada, **dónde estabas con precisión de metros**. Al compartir la foto original, esos datos viajan con ella.

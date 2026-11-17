@@ -5,6 +5,7 @@ edition = "2024"
 description = "Muestra y limpia los datos ocultos (ubicación, móvil, fecha) de tus fotos JPG y HEIC, sin salir de tu dispositivo"
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/davidbc01/foto-sin-rastro"
 
 [dependencies]
 anyhow = "1.0.104"
