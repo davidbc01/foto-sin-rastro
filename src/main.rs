@@ -2,9 +2,9 @@ use std::env;
 use std::fs;
 use std::path::Path;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use foto_sin_rastro::formatos::limpiar as limpiar_foto;
-use foto_sin_rastro::{analizar_bytes, Revelacion};
+use foto_sin_rastro::{Revelacion, analizar_bytes};
 
 fn mostrar(r: &Revelacion) {
     println!("Lo que tu foto cuenta de ti");

@@ -1,4 +1,4 @@
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 
 /// Una caja: cada uno de los bloques en los que se organiza un HEIC.
 struct Caja {
@@ -121,7 +121,11 @@ fn leer_elementos(d: &[u8], iinf: &Caja) -> Result<Vec<Elemento>> {
         } else {
             String::new()
         };
-        elementos.push(Elemento { id, tipo, tipo_mime });
+        elementos.push(Elemento {
+            id,
+            tipo,
+            tipo_mime,
+        });
     }
     Ok(elementos)
 }
@@ -232,8 +236,8 @@ pub fn limpiar_heic(datos: &[u8]) -> Result<(Vec<u8>, usize)> {
 
     for e in &elementos {
         let es_exif = &e.tipo == b"Exif";
-        let es_xmp = &e.tipo == b"mime"
-            && (e.tipo_mime.contains("xmp") || e.tipo_mime.contains("rdf+xml"));
+        let es_xmp =
+            &e.tipo == b"mime" && (e.tipo_mime.contains("xmp") || e.tipo_mime.contains("rdf+xml"));
         if !es_exif && !es_xmp {
             continue;
         }
@@ -343,7 +347,10 @@ mod tests {
         assert_eq!(bloques, 1);
         assert_eq!(limpio.len(), heic.len());
         assert!(!limpio.windows(7).any(|w| w == b"SECRETO"));
-        assert_eq!(&limpio[inicio_exif..inicio_exif + 8], &[0, 0, 0, 6, b'E', b'x', b'i', b'f']);
+        assert_eq!(
+            &limpio[inicio_exif..inicio_exif + 8],
+            &[0, 0, 0, 6, b'E', b'x', b'i', b'f']
+        );
         assert_eq!(&limpio[inicio_imagen..inicio_imagen + 10], &[0xAB; 10]);
         // Todo lo que está antes del EXIF (cajas ftyp y meta) queda intacto
         assert_eq!(&limpio[..inicio_exif], &heic[..inicio_exif]);

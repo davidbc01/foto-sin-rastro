@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use exif::{In, Reader, Tag};
 
 const SOI: [u8; 2] = [0xFF, 0xD8];
@@ -52,10 +52,10 @@ pub fn limpiar_jpeg(datos: &[u8]) -> Result<Vec<u8>> {
 
     let mut salida = Vec::with_capacity(datos.len());
     salida.extend_from_slice(&SOI);
-    if let Some(o) = orientacion {
-        if o != 1 {
-            salida.extend_from_slice(&exif_minimo(o));
-        }
+    if let Some(o) = orientacion
+        && o != 1
+    {
+        salida.extend_from_slice(&exif_minimo(o));
     }
 
     let mut i = 2;
@@ -116,8 +116,8 @@ mod tests {
         assert_eq!(
             limpio,
             vec![
-                0xFF, 0xD8, 0xFF, 0xDB, 0x00, 0x04, 0xAA, 0xBB, 0xFF, 0xDA, 0x00, 0x02, 0x11,
-                0x22, 0xFF, 0xD9
+                0xFF, 0xD8, 0xFF, 0xDB, 0x00, 0x04, 0xAA, 0xBB, 0xFF, 0xDA, 0x00, 0x02, 0x11, 0x22,
+                0xFF, 0xD9
             ]
         );
     }

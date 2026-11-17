@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 
 use crate::heic::limpiar_heic;
 use crate::limpieza::limpiar_jpeg;
