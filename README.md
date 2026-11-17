@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="web/icono.svg" alt="foto-sin-rastro" width="96">
+</p>
+
 # foto-sin-rastro
 
 [![CI](https://github.com/davidbc01/foto-sin-rastro/actions/workflows/ci.yml/badge.svg)](https://github.com/davidbc01/foto-sin-rastro/actions/workflows/ci.yml)

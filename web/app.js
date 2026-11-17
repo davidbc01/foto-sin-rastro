@@ -1,15 +1,47 @@
 import init, { revelar, limpiar, version } from "./pkg/foto_sin_rastro.js";
 
 const $ = (id) => document.getElementById(id);
+const raiz = document.documentElement;
 const zona = $("zona");
 const entrada = $("archivo");
 
 let urlVista = null;
 let urlDescarga = null;
 
+// ---------- cosas de la página que no dependen del wasm ----------
+
+// Tema claro / oscuro (el valor inicial lo pone el script de la cabecera)
+$("tema").addEventListener("click", () => {
+  const nuevo = raiz.dataset.tema === "oscuro" ? "claro" : "oscuro";
+  raiz.dataset.tema = nuevo;
+  try {
+    localStorage.setItem("tema", nuevo);
+  } catch {}
+});
+
+// Las escenas aparecen al hacer scroll
+const observador = new IntersectionObserver(
+  (entradas) => {
+    for (const e of entradas) {
+      if (e.isIntersecting) {
+        e.target.classList.add("visto");
+        observador.unobserve(e.target);
+      }
+    }
+  },
+  { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
+);
+document.querySelectorAll(".revela").forEach((el) => observador.observe(el));
+
+// Línea bajo la barra al bajar
+const barra = $("top");
+const marcarBarra = () => barra.classList.toggle("sombra", window.scrollY > 8);
+window.addEventListener("scroll", marcarBarra, { passive: true });
+marcarBarra();
+
+// ---------- motor Rust (WebAssembly) ----------
 await init();
 
-// Versión leída del propio motor Rust
 const v = "v" + version();
 document.querySelectorAll(".ver").forEach((el) => (el.textContent = v));
 
@@ -51,7 +83,7 @@ function esJpg(bytes) {
   return bytes[0] === 0xff && bytes[1] === 0xd8;
 }
 
-// "16/11/2026 19:36:30" -> ["el 16/11/2026", "19:36:30"]
+// "16/11/2026 19:36:30" -> "16/11/2026 a las 19:36:30"
 function partirFecha(texto) {
   const m = /^(\S+) (\S+)$/.exec(texto);
   return m ? `${m[1]} a las ${m[2]}` : texto;
@@ -98,6 +130,12 @@ function ponerVista(archivo, bytes) {
       "Tu navegador no sabe enseñar fotos HEIC, pero la hemos analizado igual.";
     marco.append(d);
   }
+
+  // Reinicia la caída de la polaroid y el flash
+  const foto = $("foto");
+  foto.classList.remove("cae");
+  void foto.offsetWidth;
+  foto.classList.add("cae");
 }
 
 // ---------- análisis ----------
@@ -128,8 +166,7 @@ async function procesar(archivo) {
   const movil = info ? [info.marca, info.modelo].filter(Boolean).join(" ") : "";
   const fecha = info?.fecha ? partirFecha(info.fecha) : "";
 
-  const lista = $("lista");
-  lista.replaceChildren(
+  $("lista").replaceChildren(
     linea("La hiciste con ", movil, ".", "No dice con qué móvil se hizo.", "medio"),
     linea("La hiciste el ", fecha, ".", "No lleva fecha ni hora.", "medio"),
     linea(
@@ -169,6 +206,8 @@ async function procesar(archivo) {
   }
 
   $("descargar").onclick = () => descargar(archivo, bytes);
+
+  $("resultado").scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 // ---------- limpieza ----------
@@ -192,11 +231,11 @@ function descargar(archivo, bytes) {
   a.click();
   a.remove();
 
-  // Tachado con rotulador negro
+  // Rotulador negro: primero se tapa, luego se sustituye el texto de verdad
   document.querySelectorAll("#lista .dato").forEach((s) => {
     const largo = Math.min(Math.max(s.textContent.length, 8), 24);
-    s.textContent = "x".repeat(largo);
     s.classList.add("tachado");
+    setTimeout(() => (s.textContent = "x".repeat(largo)), 700);
   });
 
   $("intro").textContent = "Esto es lo que ya no podrá contar:";
