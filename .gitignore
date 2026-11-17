@@ -1,3 +1,6 @@
 /target
 /fotos
 /web/pkg
+/node_modules
+/web/estilos.css
+/web/iconos.svg

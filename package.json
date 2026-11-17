@@ -1,0 +1,20 @@
+{
+  "name": "foto-sin-rastro-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "iconos": "node scripts/iconos.mjs",
+    "css": "tailwindcss -i web/src/estilos.css -o web/estilos.css --minify",
+    "css:watch": "tailwindcss -i web/src/estilos.css -o web/estilos.css --watch",
+    "construir": "npm run iconos && npm run css",
+    "servir": "serve web",
+    "dev": "npm run construir && concurrently -k \"npm:css:watch\" \"npm:servir\""
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.5",
+    "concurrently": "^10.0.7",
+    "lucide-static": "^1.74.0",
+    "serve": "^14.2.8",
+    "tailwindcss": "^4.3.5"
+  }
+}

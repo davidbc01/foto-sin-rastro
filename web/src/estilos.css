@@ -1,0 +1,199 @@
+@import "tailwindcss" source(none);
+@source "../index.html";
+@source "../app.js";
+
+/* ============================================================
+   1. Fuentes propias (sin servidores externos)
+   ============================================================ */
+@font-face { font-family: "Fraunces"; src: url("fonts/fraunces-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("fonts/instrument-sans-latin-wght-normal.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: swap; }
+
+/* ============================================================
+   2. Colores: claro y oscuro. Solo hay que tocar estas variables.
+   ============================================================ */
+:root,
+html[data-tema="claro"] {
+  color-scheme: light;
+  --papel: #f4efe6;
+  --papel-2: #ebe4d6;
+  --tarjeta: #fbf8f1;
+  --tinta: #1b1a17;
+  --texto-2: #3f3b34;
+  --suave: #6b665c;
+  --linea: #d6cdbb;
+  --aviso: #c4262e;
+  --limpio: #2f6b4f;
+  --amarillo: #ffd84d;
+  --resalte: #ffd84d;
+  --sombra: #1b1a17;
+  --dato-bg: #fff3c4;
+  --dato-alto-bg: #fadad7;
+  --dato-alto-fg: #8c1d1d;
+}
+html[data-tema="oscuro"] {
+  color-scheme: dark;
+  --papel: #14130f;
+  --papel-2: #1b1913;
+  --tarjeta: #1f1c16;
+  --tinta: #f1ece0;
+  --texto-2: #cfc8b8;
+  --suave: #a29b8b;
+  --linea: #343027;
+  --aviso: #ff7b7b;
+  --limpio: #5fc596;
+  --resalte: rgba(255, 216, 77, .62);
+  --sombra: #3b362b;
+  --dato-bg: #3a3310;
+  --dato-alto-bg: #4a1d1f;
+  --dato-alto-fg: #ffb4b4;
+}
+
+/* ============================================================
+   3. Tailwind: conectamos nuestras variables y fuentes
+   ============================================================ */
+@custom-variant oscuro (&:where([data-tema="oscuro"], [data-tema="oscuro"] *));
+
+@theme inline {
+  --color-papel: var(--papel);
+  --color-papel-2: var(--papel-2);
+  --color-tarjeta: var(--tarjeta);
+  --color-tinta: var(--tinta);
+  --color-cuerpo: var(--texto-2);
+  --color-suave: var(--suave);
+  --color-linea: var(--linea);
+  --color-aviso: var(--aviso);
+  --color-limpio: var(--limpio);
+  --color-amarillo: var(--amarillo);
+}
+
+@theme {
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-sans: "Instrument Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --animate-subir: subir .9s cubic-bezier(.2, .8, .2, 1) both;
+  --animate-aparece: aparece .55s both;
+  --animate-giro: giro 1s .2s cubic-bezier(.3, 1.5, .5, 1) both;
+
+  @keyframes subir { from { opacity: 0; transform: translateY(34px); } }
+  @keyframes aparece { from { opacity: 0; transform: translateY(14px); } }
+  @keyframes giro { from { opacity: 0; transform: rotate(-30deg) scale(.5); } }
+}
+
+/* ============================================================
+   4. Base
+   ============================================================ */
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-papel font-sans text-[1.06rem] leading-[1.7] text-tinta transition-colors duration-300; }
+  button { cursor: pointer; font-family: inherit; }
+  :focus-visible { outline: 3px solid var(--tinta); outline-offset: 3px; }
+  [id] { scroll-margin-top: 5rem; }
+  .oculto { display: none !important; }
+
+  mark {
+    color: inherit;
+    padding: 0 3px;
+    background: linear-gradient(var(--resalte), var(--resalte)) no-repeat 0 92% / 100% 42%;
+  }
+}
+
+/* ============================================================
+   5. Componentes propios (lo que Tailwind solo no resuelve bien)
+   ============================================================ */
+@layer components {
+  .contenedor { @apply mx-auto w-full max-w-[1040px] px-7; }
+  .titulo { @apply font-serif text-[clamp(1.8rem,4.5vw,2.5rem)] leading-[1.15] font-bold tracking-tight; }
+
+  /* Iconos de Lucide (sprite). El tamaño se cambia con size-*, el color con text-* */
+  .icono { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Botones */
+  .btn {
+    display: inline-flex; align-items: center; gap: .6rem; padding: .9rem 1.5rem;
+    border: 2px solid var(--tinta); border-radius: 10px; background: var(--amarillo); color: #1b1a17;
+    font-weight: 650; text-decoration: none; box-shadow: 3px 3px 0 var(--tinta);
+    transition: translate .12s, box-shadow .12s, background .3s;
+  }
+  .btn:hover:not(:disabled) { translate: -1px -1px; box-shadow: 5px 5px 0 var(--tinta); }
+  .btn:active:not(:disabled) { translate: 2px 2px; box-shadow: 1px 1px 0 var(--tinta); }
+  .btn:disabled { background: var(--limpio); border-color: var(--limpio); color: var(--papel); box-shadow: none; cursor: default; }
+
+  .btn-texto {
+    display: inline-flex; align-items: center; gap: .5rem; padding: .25rem 0; border: 0; background: none;
+    font-weight: 500; color: var(--tinta); text-decoration: underline; text-decoration-color: var(--amarillo);
+    text-decoration-thickness: 3px; text-underline-offset: 4px;
+  }
+  .btn-texto:hover { text-decoration-color: var(--tinta); }
+
+  /* Zona donde se suelta la foto */
+  .zona { transition: rotate .2s, scale .2s, box-shadow .2s, background .3s; }
+  .zona:hover, .zona:focus-visible, .zona.encima { rotate: -.4deg; scale: 1.01; box-shadow: 6px 7px 0 var(--sombra); outline: none; }
+
+  /* Etiqueta de equipaje de la portada */
+  .etiqueta {
+    position: relative; rotate: -1.5deg; background: var(--tarjeta); border: 1.5px solid var(--tinta);
+    border-radius: 6px 22px 22px 6px; padding: 1.25rem 1.5rem 1.25rem 3.6rem; box-shadow: 5px 6px 0 var(--sombra);
+  }
+  .etiqueta::before {
+    content: ""; position: absolute; left: 18px; top: 50%; width: 18px; height: 18px; margin-top: -9px;
+    border-radius: 50%; border: 1.5px solid var(--tinta); background: var(--papel);
+  }
+
+  /* Polaroid con la foto del usuario */
+  .polaroid { position: relative; background: #fff; padding: 14px 14px 56px; rotate: -2.2deg; box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 18px 34px -12px rgba(0,0,0,.45); }
+  .polaroid::before {
+    content: ""; position: absolute; top: -14px; left: 50%; width: 96px; height: 28px; margin-left: -48px; z-index: 2;
+    background: rgba(235, 214, 160, .8); transform: rotate(3deg); box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  }
+  .polaroid .marco { position: relative; aspect-ratio: 4 / 5; background: #e6e0d2; display: grid; place-items: center; overflow: hidden; }
+  .polaroid .marco::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  .polaroid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .polaroid .sinvista { padding: 18px; text-align: center; color: #6b665c; font-size: .9rem; line-height: 1.5; }
+  .polaroid figcaption {
+    position: absolute; left: 14px; right: 14px; bottom: 14px; height: 40px; display: flex; align-items: center;
+    font: .8rem var(--font-mono); color: #6b665c; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+
+  /* Los datos que revela la foto, y el "rotulador" que los tacha */
+  .dato {
+    padding: 2px 7px; border-radius: 4px; font: 600 .92em var(--font-mono);
+    background: linear-gradient(var(--tinta), var(--tinta)) no-repeat 0 0, var(--dato-bg);
+    background-size: 0% 100%, auto;
+    transition: background-size .6s ease, color .2s .45s;
+  }
+  li[data-nivel="alto"] .dato { background-color: var(--dato-alto-bg); color: var(--dato-alto-fg); }
+  #lista .dato.tachado { background-size: 100% 100%, auto; color: transparent; user-select: none; }
+}
+
+/* ============================================================
+   6. Animaciones propias (solo si no pides reducirlas)
+   ============================================================ */
+@keyframes subraya { from { background-size: 0% 42%; } }
+@keyframes trazar { to { stroke-dashoffset: 0; } }
+@keyframes caer { from { opacity: 0; transform: translateY(-90px) rotate(-9deg); } }
+@keyframes flash { 0% { opacity: 0; } 12% { opacity: .95; } 100% { opacity: 0; } }
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    mark { animation: subraya .9s .9s cubic-bezier(.3, .8, .3, 1) both; }
+    .trazo { stroke-dasharray: 100; stroke-dashoffset: 100; animation: trazar .7s .8s ease-out forwards; }
+
+    /* Aparecer al hacer scroll */
+    html.js .revela { opacity: 0; translate: 0 30px; transition: opacity .8s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
+    html.js .revela.visto { opacity: 1; translate: 0 0; }
+    html.js .etiqueta.revela { translate: 0 0; scale: 1.22; transition: opacity .35s .4s, scale .6s .4s cubic-bezier(.3, 1.7, .5, 1); }
+    html.js .etiqueta.revela.visto { scale: 1; }
+
+    /* La polaroid cae y hace flash */
+    .polaroid.cae { animation: caer .8s cubic-bezier(.3, 1.3, .5, 1) both; }
+    .polaroid.cae .marco::after { animation: flash .9s .55s ease-out both; }
+    details[open] > p { animation: aparece .4s both; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
