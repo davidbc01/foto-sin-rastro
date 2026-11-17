@@ -2,6 +2,9 @@ pub mod formatos;
 pub mod heic;
 pub mod limpieza;
 
+#[cfg(feature = "web")]
+pub mod web;
+
 use std::io::Cursor;
 
 use anyhow::{Context, Result};
@@ -25,6 +28,18 @@ fn dms_a_decimal(grados: f64, minutos: f64, segundos: f64, referencia: &str) -> 
     } else {
         valor
     }
+}
+
+/// Convierte "2026:11:16 19:36:30" en "16/11/2026 19:36:30".
+/// Si el texto no tiene ese formato, lo devuelve tal cual.
+fn fecha_legible(original: &str) -> String {
+    if let Some((fecha, hora)) = original.split_once(' ') {
+        let partes: Vec<&str> = fecha.split(':').collect();
+        if let [anio, mes, dia] = partes.as_slice() {
+            return format!("{dia}/{mes}/{anio} {hora}");
+        }
+    }
+    original.to_string()
 }
 
 fn texto(exif: &Exif, tag: Tag) -> Option<String> {
@@ -61,7 +76,7 @@ pub fn analizar_bytes(datos: &[u8]) -> Result<Revelacion> {
     Ok(Revelacion {
         marca: texto(&exif, Tag::Make),
         modelo: texto(&exif, Tag::Model),
-        fecha: texto(&exif, Tag::DateTimeOriginal),
+        fecha: texto(&exif, Tag::DateTimeOriginal).map(|f| fecha_legible(&f)),
         latitud: grados_decimales(&exif, Tag::GPSLatitude, Tag::GPSLatitudeRef),
         longitud: grados_decimales(&exif, Tag::GPSLongitude, Tag::GPSLongitudeRef),
     })
@@ -90,5 +105,15 @@ mod tests {
         // 33° 51' 54" S = -33.865
         let lat = dms_a_decimal(33.0, 51.0, 54.0, "S");
         assert!((lat + 33.865).abs() < 1e-9);
+    }
+
+    #[test]
+    fn la_fecha_se_muestra_en_formato_espanol() {
+        assert_eq!(fecha_legible("2026:11:16 19:36:30"), "16/11/2026 19:36:30");
+    }
+
+    #[test]
+    fn una_fecha_rara_se_deja_como_esta() {
+        assert_eq!(fecha_legible("sin fecha"), "sin fecha");
     }
 }

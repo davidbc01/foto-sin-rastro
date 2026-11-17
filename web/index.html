@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lo que tu foto cuenta de ti</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; padding: 24px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #0e1116; color: #e6edf3;
+    }
+    main { max-width: 640px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin: 0 0 8px; }
+    .sub { color: #9aa7b4; margin: 0 0 24px; line-height: 1.5; }
+    #zona {
+      border: 2px dashed #3b4654; border-radius: 16px; padding: 40px 16px;
+      text-align: center; cursor: pointer; transition: .15s;
+    }
+    #zona.encima, #zona:hover, #zona:focus-visible { border-color: #4ade80; background: #131a14; outline: none; }
+    #zona strong { display: block; font-size: 1.1rem; margin-bottom: 6px; }
+    #zona span { color: #9aa7b4; font-size: .9rem; }
+    #resultado { margin-top: 24px; }
+    .tarjeta { background: #161b22; border: 1px solid #262e38; border-radius: 16px; padding: 20px; }
+    .tarjeta h2 { margin: 0 0 14px; font-size: 1.1rem; }
+    dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 10px 16px; }
+    dt { color: #9aa7b4; }
+    dd { margin: 0; word-break: break-word; }
+    .alerta { color: #f87171; font-weight: 600; }
+    .bien { color: #4ade80; font-weight: 600; }
+    .botones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    button {
+      font: inherit; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+      border: 1px solid #3b4654; background: #1d2530; color: inherit;
+    }
+    button.principal { background: #4ade80; border-color: #4ade80; color: #07130b; font-weight: 700; }
+    button:hover { filter: brightness(1.12); }
+    .nota { color: #9aa7b4; font-size: .85rem; margin-top: 16px; line-height: 1.5; }
+    .oculto { display: none; }
+    footer { margin-top: 32px; color: #9aa7b4; font-size: .85rem; }
+    footer a { color: #4ade80; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Lo que tu foto cuenta de ti</h1>
+    <p class="sub">
+      Cada foto lleva datos ocultos: dónde estabas, con qué móvil y cuándo.
+      Suéltala aquí para verlo y descargar una copia limpia.
+      <strong>Nada se sube a ningún servidor</strong>: todo ocurre en tu navegador.
+    </p>
+
+    <div id="zona" tabindex="0" role="button" aria-label="Elegir una foto">
+      <strong>Arrastra una foto aquí</strong>
+      <span>o pulsa para elegirla (JPG o HEIC)</span>
+    </div>
+    <input id="archivo" type="file" accept=".jpg,.jpeg,.heic,.heif,image/jpeg,image/heic" class="oculto">
+
+    <section id="resultado" class="oculto">
+      <div class="tarjeta">
+        <h2 id="titulo"></h2>
+        <dl>
+          <dt>Móvil o cámara</dt><dd id="movil"></dd>
+          <dt>Fecha</dt><dd id="fecha"></dd>
+          <dt>Ubicación</dt><dd id="ubicacion"></dd>
+        </dl>
+        <div class="botones">
+          <button id="descargar" class="principal">Descargar copia limpia</button>
+          <button id="mapa" class="oculto">Ver en el mapa</button>
+        </div>
+        <p class="nota" id="nota"></p>
+      </div>
+    </section>
+
+    <footer>
+      Código abierto (MIT) ·
+      <a href="https://github.com/davidbc01/foto-sin-rastro">github.com/davidbc01/foto-sin-rastro</a>
+    </footer>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
