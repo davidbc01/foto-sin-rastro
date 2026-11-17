@@ -3,8 +3,8 @@ use std::fs;
 use std::path::Path;
 
 use anyhow::{bail, Context, Result};
-use foto_reveal::formatos::limpiar as limpiar_foto;
-use foto_reveal::{analizar_bytes, Revelacion};
+use foto_sin_rastro::formatos::limpiar as limpiar_foto;
+use foto_sin_rastro::{analizar_bytes, Revelacion};
 
 fn mostrar(r: &Revelacion) {
     println!("Lo que tu foto cuenta de ti");
@@ -56,7 +56,7 @@ fn main() -> Result<()> {
         [ruta] => revelar(ruta),
         [orden, ruta] if orden == "limpiar" => limpiar(ruta),
         _ => bail!(
-            "Uso:\n  foto-reveal <foto>                muestra lo que cuenta la foto\n  foto-reveal limpiar <foto>        guarda una copia sin metadatos (JPG o HEIC)"
+            "Uso:\n  sin-rastro <foto>                muestra lo que cuenta la foto\n  sin-rastro limpiar <foto>        guarda una copia sin metadatos (JPG o HEIC)"
         ),
     }
 }
