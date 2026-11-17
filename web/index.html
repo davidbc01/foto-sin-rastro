@@ -55,6 +55,7 @@
       --dato-alto-fg: #ffb4a3;
     }
     :root {
+      /* Serifa: solo titulares. Sans: todo el texto y la interfaz. Mono: solo datos técnicos. */
       --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
       --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
@@ -63,12 +64,12 @@
     html { scroll-behavior: smooth; scroll-padding-top: 80px; }
     body {
       margin: 0; background: var(--papel); color: var(--tinta);
-      font: 1.08rem/1.7 var(--sans);
+      font: 1.06rem/1.7 var(--sans);
       transition: background .35s, color .35s;
     }
     a { color: inherit; }
-    .col { max-width: 680px; margin: 0 auto; padding: 0 22px; }
-    .ancho { max-width: 940px; margin: 0 auto; padding: 0 22px; }
+    button { font-family: var(--sans); }
+    .ancho { max-width: 1040px; margin: 0 auto; padding: 0 28px; }
     .oculto { display: none !important; }
 
     /* ---------- barra superior ---------- */
@@ -79,76 +80,74 @@
       border-bottom: 1px solid transparent; transition: border-color .3s, background .35s;
     }
     .top.sombra { border-bottom-color: var(--linea); }
-    .barra { display: flex; justify-content: space-between; align-items: center; height: 64px; font: .85rem var(--mono); }
-    .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .marca img { width: 28px; height: 28px; display: block; }
-    .barra .der { display: flex; align-items: center; gap: 16px; }
-    .barra .der a { text-decoration: none; }
-    .barra .der a:hover { text-decoration: underline; }
-    .ver { color: var(--suave); }
+    .barra { display: flex; justify-content: space-between; align-items: center; height: 66px; font-size: .92rem; }
+    .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 650; }
+    .marca img { width: 30px; height: 30px; display: block; }
+    .ver { color: var(--suave); font-weight: 400; }
+    .barra .der { display: flex; align-items: center; gap: 18px; }
+    .barra .der a { text-decoration: none; color: var(--suave); }
+    .barra .der a:hover { color: var(--tinta); }
 
     button.tema {
       width: 38px; height: 38px; padding: 0; border-radius: 50%; display: grid; place-items: center;
-      background: transparent; color: var(--tinta); border: 1.5px solid var(--linea); box-shadow: none; font-size: 1rem;
+      background: transparent; color: var(--tinta); border: 1.5px solid var(--linea); box-shadow: none;
     }
     button.tema:hover { transform: rotate(18deg); box-shadow: none; border-color: var(--tinta); }
     button.tema svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     html[data-tema="oscuro"] .luna, html[data-tema="claro"] .sol { display: none; }
 
     /* ---------- portada ---------- */
-    .portada { padding: 72px 0 80px; }
-    .logo-grande { width: 84px; height: 84px; display: block; transform: rotate(-5deg); transition: transform .3s; }
-    .logo-grande:hover { transform: rotate(3deg) scale(1.06); }
+    .portada { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; padding: 56px 28px 72px; }
+    @media (max-width: 860px) { .portada { grid-template-columns: 1fr; gap: 40px; padding-top: 36px; } }
     h1 {
-      font: 700 clamp(2.5rem, 8.5vw, 4.6rem)/1.04 var(--serif);
-      letter-spacing: -.02em; margin: 34px 0 26px;
+      font: 700 clamp(2.6rem, 7vw, 4.8rem)/1.03 var(--serif);
+      letter-spacing: -.025em; margin: 0 0 24px;
     }
     h1 .l { display: block; }
     mark {
       color: inherit; padding: 0 3px;
       background: linear-gradient(var(--resalte), var(--resalte)) no-repeat 0 92% / 100% 42%;
     }
-    .entradilla { font: 1.35rem/1.5 var(--serif); color: var(--texto-2); margin: 0 0 56px; max-width: 520px; }
-    .seguir { display: inline-flex; align-items: center; gap: 10px; font: .85rem var(--mono); color: var(--suave); text-decoration: none; }
-    .seguir span { display: inline-block; }
+    .entradilla { font-size: 1.2rem; line-height: 1.6; color: var(--texto-2); margin: 0 0 34px; max-width: 520px; }
+    .entradilla strong { color: var(--tinta); font-weight: 650; }
+    .acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
+    .boton {
+      display: inline-block; font-weight: 650; text-decoration: none; border-radius: 10px; padding: 14px 26px;
+      border: 2px solid var(--tinta); background: var(--tinta); color: var(--papel);
+      box-shadow: 3px 3px 0 var(--aviso); transition: transform .12s, box-shadow .12s;
+    }
+    .boton:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--aviso); }
+    .sec { color: var(--tinta); text-underline-offset: 4px; text-decoration-color: var(--aviso); }
 
-    /* ---------- escenas ---------- */
-    .escena { padding: 70px 0; }
-    .escena p { margin: 0 0 1.2em; }
-    .escena p.grande { font: 1.6rem/1.45 var(--serif); }
-    .escena strong { font-weight: 650; }
-    .escena .fin { margin-bottom: 0; }
+    .escaparate { position: relative; display: flex; flex-direction: column; align-items: flex-start; padding-left: 8px; }
+    .logo-grande { width: 120px; height: 120px; display: block; transform: rotate(-5deg); transition: transform .3s; margin-bottom: 8px; }
+    .logo-grande:hover { transform: rotate(3deg) scale(1.05); }
 
     .etiqueta {
-      position: relative; margin: 44px 0 44px 8px; max-width: 430px; transform: rotate(-1.5deg);
+      position: relative; margin: 20px 0 0 22px; max-width: 400px; width: 100%; transform: rotate(-1.5deg);
       background: var(--tarjeta); border: 1.5px solid var(--tinta); border-radius: 6px 22px 22px 6px;
-      padding: 20px 24px 20px 56px; font: .9rem/1.8 var(--mono);
+      padding: 20px 24px 20px 58px; font: .92rem/1.85 var(--mono);
       box-shadow: 5px 6px 0 var(--sombra); transition: background .35s;
     }
     .etiqueta::before {
       content: ""; position: absolute; left: 18px; top: 50%; width: 18px; height: 18px; margin-top: -9px;
       border-radius: 50%; border: 1.5px solid var(--tinta); background: var(--papel);
     }
-    .etiqueta small { display: block; color: var(--suave); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+    .etiqueta small { display: block; font-family: var(--sans); color: var(--suave); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
     .etiqueta b { color: var(--aviso); font-weight: 700; }
 
-    .boton {
-      display: inline-block; font-weight: 650; text-decoration: none; border-radius: 10px; padding: 14px 24px;
-      border: 2px solid var(--tinta); background: var(--tinta); color: var(--papel);
-      box-shadow: 3px 3px 0 var(--aviso); transition: transform .12s, box-shadow .12s;
-    }
-    .boton:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--aviso); }
+    /* ---------- titulares ---------- */
+    h2 { font: 700 clamp(1.8rem, 4.5vw, 2.5rem)/1.15 var(--serif); letter-spacing: -.01em; margin: 0 0 10px; }
+    .lema { color: var(--suave); margin: 0 0 36px; }
 
     /* ---------- herramienta ---------- */
-    .herramienta { margin-top: 50px; padding: 90px 0 100px; background: var(--papel-2); border-block: 1px solid var(--linea); transition: background .35s; }
-    h2 { font: 700 clamp(1.8rem, 5vw, 2.6rem)/1.15 var(--serif); letter-spacing: -.01em; margin: 0 0 10px; }
-    .lema { color: var(--suave); margin: 0 0 38px; }
+    .herramienta { padding: 80px 0 90px; background: var(--papel-2); border-block: 1px solid var(--linea); transition: background .35s; }
 
     #zona {
       border: 2px dashed var(--tinta); border-radius: 16px; padding: 64px 22px; text-align: center;
       cursor: pointer; background: var(--tarjeta); transition: transform .2s, background .35s, box-shadow .2s;
     }
-    #zona:hover, #zona:focus-visible, #zona.encima { transform: rotate(-.5deg) scale(1.01); box-shadow: 6px 7px 0 var(--sombra); outline: none; }
+    #zona:hover, #zona:focus-visible, #zona.encima { transform: rotate(-.4deg) scale(1.01); box-shadow: 6px 7px 0 var(--sombra); outline: none; }
     #zona strong { display: block; font: 700 1.7rem var(--serif); margin-bottom: 6px; }
     #zona span { color: var(--suave); font-size: .98rem; }
     #zona u { text-decoration-color: var(--aviso); text-underline-offset: 3px; }
@@ -167,18 +166,18 @@
     .polaroid .marco { position: relative; aspect-ratio: 4 / 5; background: #e6e0d2; display: grid; place-items: center; overflow: hidden; }
     .polaroid .marco::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
     .polaroid img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .polaroid .sinvista { padding: 18px; text-align: center; color: #6b665c; font: .85rem/1.5 var(--mono); }
+    .polaroid .sinvista { padding: 18px; text-align: center; color: #6b665c; font-size: .9rem; line-height: 1.5; }
     .polaroid figcaption {
       position: absolute; left: 14px; right: 14px; bottom: 14px; height: 40px; display: flex; align-items: center;
       font: .8rem var(--mono); color: #6b665c; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
     }
 
-    .nota-papel .intro { font: 1.4rem/1.4 var(--serif); margin: 0 0 20px; }
+    .nota-papel .intro { font: 700 1.5rem/1.3 var(--serif); margin: 0 0 18px; }
     .nota-papel ul { list-style: none; margin: 0 0 24px; padding: 0; }
-    .nota-papel li { padding: 15px 0; border-bottom: 1px solid var(--linea); font: 1.15rem/1.55 var(--serif); }
-    .nota-papel li.nada { color: var(--suave); font-style: italic; }
+    .nota-papel li { padding: 15px 0; border-bottom: 1px solid var(--linea); font-size: 1.08rem; line-height: 1.6; }
+    .nota-papel li.nada { color: var(--suave); }
     .dato {
-      font: 600 .98em var(--mono); padding: 2px 7px; border-radius: 4px;
+      font: 600 .92em var(--mono); padding: 2px 7px; border-radius: 4px;
       background: linear-gradient(var(--tinta), var(--tinta)) no-repeat 0 0, var(--dato-bg);
       background-size: 0% 100%, auto;
       transition: background-size .6s ease, color .2s .45s;
@@ -191,7 +190,7 @@
 
     .botones { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
     button {
-      font: inherit; font-weight: 650; cursor: pointer; border-radius: 10px; padding: 14px 24px;
+      font-size: 1rem; font-weight: 650; cursor: pointer; border-radius: 10px; padding: 14px 24px;
       border: 2px solid var(--tinta); background: var(--tinta); color: var(--papel);
       box-shadow: 3px 3px 0 var(--aviso); transition: transform .12s, box-shadow .12s, background .3s;
     }
@@ -203,36 +202,43 @@
     .enlace:hover:not(:disabled) { transform: none; box-shadow: none; text-decoration-color: var(--aviso); }
     .nota { color: var(--suave); font-size: .92rem; margin: 20px 0 0; }
 
-    /* ---------- preguntas ---------- */
-    .preguntas { padding: 110px 0 40px; }
-    details { border-top: 1.5px solid var(--tinta); padding: 6px 0; }
+    /* ---------- historia y preguntas (misma rejilla) ---------- */
+    .bloque { padding: 84px 28px 20px; }
+    .rejilla { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
+    .rejilla > h2 { position: sticky; top: 96px; }
+    @media (max-width: 820px) { .rejilla { grid-template-columns: 1fr; gap: 22px; } .rejilla > h2 { position: static; } }
+    .texto { max-width: 640px; }
+    .texto p { margin: 0 0 1.15em; color: var(--texto-2); }
+    .texto p:first-child { font-size: 1.18rem; color: var(--tinta); }
+    .texto strong { color: var(--tinta); font-weight: 650; }
+
+    details { border-top: 1.5px solid var(--tinta); padding: 4px 0; }
     details:last-of-type { border-bottom: 1.5px solid var(--tinta); }
-    summary { cursor: pointer; list-style: none; padding: 20px 34px 20px 0; font: 700 1.25rem var(--serif); position: relative; }
+    summary { cursor: pointer; list-style: none; padding: 18px 34px 18px 0; font: 700 1.2rem var(--serif); position: relative; }
     summary::-webkit-details-marker { display: none; }
-    summary::after { content: "+"; position: absolute; right: 4px; top: 14px; font: 400 1.8rem var(--mono); transition: transform .25s; }
+    summary::after { content: "+"; position: absolute; right: 4px; top: 12px; font: 400 1.8rem var(--mono); transition: transform .25s; }
     details[open] summary::after { transform: rotate(45deg); }
-    details p { margin: 0 0 22px; color: var(--texto-2); }
+    details p { margin: 0 0 20px; color: var(--texto-2); }
     details code { font: .9em var(--mono); background: var(--papel-2); padding: 1px 6px; border-radius: 4px; }
 
-    footer { padding: 70px 0 64px; color: var(--suave); font: .85rem/2 var(--mono); }
-    footer .fila { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; }
-    footer img { width: 22px; height: 22px; display: block; }
+    footer { padding: 80px 28px 64px; color: var(--suave); font-size: .9rem; line-height: 2; }
+    footer .fila { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 24px; }
+    footer img { width: 24px; height: 24px; display: block; }
     footer a:hover { color: var(--tinta); }
 
     /* ---------- animaciones (solo si no pides reducirlas) ---------- */
     @media (prefers-reduced-motion: no-preference) {
       h1 .l { animation: subir .9s cubic-bezier(.2, .8, .2, 1) both; }
       h1 .l:nth-child(2) { animation-delay: .15s; }
-      .logo-grande { animation: giro 1s cubic-bezier(.3, 1.5, .5, 1) both; }
       .entradilla { animation: subir .9s .35s cubic-bezier(.2, .8, .2, 1) both; }
-      .seguir { animation: subir .9s .55s cubic-bezier(.2, .8, .2, 1) both; }
-      .seguir span { animation: rebote 1.6s 1.4s infinite; }
+      .acciones { animation: subir .9s .5s cubic-bezier(.2, .8, .2, 1) both; }
+      .logo-grande { animation: giro 1s .2s cubic-bezier(.3, 1.5, .5, 1) both; }
       mark { animation: subraya .9s .9s cubic-bezier(.3, .8, .3, 1) both; }
-      .trazo { stroke-dasharray: 100; stroke-dashoffset: 100; animation: trazar .7s .7s ease-out forwards; }
+      .trazo { stroke-dasharray: 100; stroke-dashoffset: 100; animation: trazar .7s .8s ease-out forwards; }
 
       html.js .revela { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s cubic-bezier(.2, .8, .2, 1); }
       html.js .revela.visto { opacity: 1; transform: none; }
-      html.js .etiqueta.revela { transform: rotate(-1.5deg) scale(1.22); transition: opacity .35s, transform .6s cubic-bezier(.3, 1.7, .5, 1); }
+      html.js .etiqueta.revela { transform: rotate(-1.5deg) scale(1.22); transition: opacity .35s .4s, transform .6s .4s cubic-bezier(.3, 1.7, .5, 1); }
       html.js .etiqueta.revela.visto { transform: rotate(-1.5deg) scale(1); }
 
       #resultado:not(.oculto) .intro { animation: aparece .5s both; }
@@ -250,7 +256,6 @@
     @keyframes giro { from { opacity: 0; transform: rotate(-30deg) scale(.5); } }
     @keyframes subraya { from { background-size: 0% 42%; } }
     @keyframes trazar { to { stroke-dashoffset: 0; } }
-    @keyframes rebote { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
     @keyframes caer { from { opacity: 0; transform: translateY(-90px) rotate(-9deg); } }
     @keyframes flash { 0% { opacity: 0; } 12% { opacity: .95; } 100% { opacity: 0; } }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
@@ -258,7 +263,7 @@
 </head>
 <body>
   <header class="top" id="top">
-    <div class="col barra">
+    <div class="ancho barra">
       <a class="marca" href="#" aria-label="foto-sin-rastro">
         <img src="icono.svg" alt="">
         <span>foto-sin-rastro <span class="ver"></span></span>
@@ -274,45 +279,33 @@
   </header>
 
   <main>
-    <section class="col portada">
-      <svg class="logo-grande" viewBox="0 0 64 64" aria-hidden="true">
-        <rect width="64" height="64" rx="15" fill="#1b1a17"/>
-        <rect x="13" y="14" width="38" height="36" rx="4" fill="#f4efe6"/>
-        <circle cx="32" cy="29" r="7" fill="#d9482b"/>
-        <path d="M26 33.5 32 44l6-10.5z" fill="#d9482b"/>
-        <circle cx="32" cy="29" r="2.6" fill="#f4efe6"/>
-        <path class="trazo" pathLength="100" d="M15 49 49 15" stroke="#ffd84d" stroke-width="5.5" stroke-linecap="round" fill="none"/>
-      </svg>
-      <h1><span class="l">Tu foto enseña</span><span class="l"><mark>más</mark> de lo que ves.</span></h1>
-      <p class="entradilla">Una historia corta sobre una foto de tu perro, y sobre lo que viaja escondido dentro de ella.</p>
-      <a class="seguir" href="#escena-1">Sigue bajando <span>↓</span></a>
-    </section>
-
-    <section class="col escena revela" id="escena-1">
-      <p class="grande">Haces una foto a tu perro en el salón y se la mandas a alguien. Se ve el perro, el sofá, poco más. O eso crees.</p>
-    </section>
-
-    <section class="col escena">
-      <p class="revela">Porque tu móvil, sin preguntarte, ha pegado <strong>una etiqueta escondida</strong> dentro del archivo.</p>
-
-      <div class="etiqueta revela" aria-label="Ejemplo de etiqueta oculta">
-        <small>Ejemplo de lo que lleva escondido</small>
-        Móvil: iPhone 15 Pro<br>
-        Fecha: 16/11/2026 19:36:30<br>
-        <b>Lugar: 40.41694, -3.70361</b>
+    <section class="ancho portada">
+      <div>
+        <h1><span class="l">Tu foto enseña</span><span class="l"><mark>más</mark> de lo que ves.</span></h1>
+        <p class="entradilla">
+          Tu móvil esconde dentro de cada foto <strong>una etiqueta</strong>: con qué móvil la hiciste, cuándo y, si tenías la ubicación activada, <strong>dónde estabas</strong>. Aquí la ves y te quedas con una copia sin ella.
+        </p>
+        <div class="acciones">
+          <a class="boton" href="#prueba">Probar con mi foto ↓</a>
+          <a class="sec" href="#historia">¿Por qué importa?</a>
+        </div>
       </div>
 
-      <p class="revela fin">Dice con qué móvil la hiciste, el día y la hora exactos y, si tenías la ubicación activada, <strong>las coordenadas de dónde estabas, con metros de precisión</strong>.</p>
-    </section>
-
-    <section class="col escena">
-      <p class="revela">Muchas aplicaciones, como WhatsApp, suelen quitarla al enviar. Otras no: el correo, algunos foros y anuncios, las nubes, las fotos enviadas «como archivo».</p>
-      <p class="grande revela fin">Y tú no ves cuál es cuál.</p>
-    </section>
-
-    <section class="col escena">
-      <p class="revela">A esa etiqueta se le llama <strong>metadatos</strong> (EXIF, para los de la jerga). Aquí puedes ver la de tus fotos y quedarte con una copia sin ella.</p>
-      <p class="revela fin"><a class="boton" href="#prueba">Probar con mi foto ↓</a></p>
+      <div class="escaparate">
+        <svg class="logo-grande" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="15" fill="#1b1a17"/>
+          <path d="M32 53C32 53 16.5 39.5 16.5 27.5a15.5 15.5 0 0 1 31 0C47.5 39.5 32 53 32 53z" fill="#f4efe6"/>
+          <circle cx="32" cy="27.5" r="5.8" fill="#1b1a17"/>
+          <path class="trazo" pathLength="100" d="M13 51 51 13" stroke="#1b1a17" stroke-width="10" stroke-linecap="round" fill="none"/>
+          <path class="trazo" pathLength="100" d="M13 51 51 13" stroke="#ffd84d" stroke-width="4.6" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div class="etiqueta revela" aria-label="Ejemplo de etiqueta oculta">
+          <small>Ejemplo de lo que lleva escondido</small>
+          Móvil: iPhone 15 Pro<br>
+          Fecha: 16/11/2026 19:36:30<br>
+          <b>Lugar: 40.41694, -3.70361</b>
+        </div>
+      </div>
     </section>
 
     <section class="herramienta" id="prueba">
@@ -347,33 +340,47 @@
       </div>
     </section>
 
-    <section class="col preguntas">
-      <h2 class="revela" style="margin-bottom:30px">Preguntas que seguro te haces</h2>
+    <section class="ancho bloque" id="historia">
+      <div class="rejilla">
+        <h2 class="revela">La historia corta</h2>
+        <div class="texto revela">
+          <p>Haces una foto a tu perro en el salón y se la mandas a alguien. Se ve el perro y el sofá. Lo que no se ve es la etiqueta: el móvil, el momento y, si la ubicación estaba activada, <strong>las coordenadas del sitio, con metros de precisión</strong>.</p>
+          <p>WhatsApp y otras apps suelen quitarla al enviar. El correo, algunos foros y anuncios, las nubes o las fotos enviadas «como archivo», no siempre. Y tú no ves cuál es cuál.</p>
+          <p>A esa etiqueta se le llama <strong>metadatos</strong> (EXIF, para los de la jerga). Aquí puedes ver la de tus fotos y quedarte con una copia sin ella.</p>
+        </div>
+      </div>
+    </section>
 
-      <details class="revela">
-        <summary>¿Mi foto se sube a algún sitio?</summary>
-        <p>No. El programa se descarga en tu navegador y trabaja ahí. Puedes comprobarlo: pulsa <code>F12</code>, abre la pestaña <em>Red</em> y suelta una foto; no sale ninguna petición. Incluso puedes cortar el wifi después de cargar esta página y seguirá funcionando. Lo único que se conecta a internet es el botón del mapa, y solo si tú lo pulsas y aceptas el aviso.</p>
-      </details>
-      <details class="revela">
-        <summary>¿Pierdo calidad en la foto?</summary>
-        <p>No. La imagen no se vuelve a comprimir: se copian tal cual los mismos datos y solo se quitan los bloques de metadatos. En un JPG se conserva únicamente la orientación, para que las fotos hechas en vertical no salgan giradas.</p>
-      </details>
-      <details class="revela">
-        <summary>¿Qué borra exactamente?</summary>
-        <p>La ubicación, el modelo del móvil o cámara, la fecha y hora, los comentarios y los datos de edición que añaden algunos programas (XMP e IPTC).</p>
-      </details>
-      <details class="revela">
-        <summary>¿Qué no hace?</summary>
-        <p>No toca lo que se ve en la foto: si sale tu fachada o la matrícula de un coche, eso sigue ahí. Todavía no funciona con PNG, WebP ni capturas de pantalla. En las HEIC se vacían los datos EXIF y XMP, pero el archivo puede guardar otros datos técnicos que aún no tocamos. Esto es la versión <span class="ver"></span>: está en pruebas y se irá mejorando.</p>
-      </details>
-      <details class="revela">
-        <summary>Ya he mandado fotos con mi ubicación, ¿qué hago?</summary>
-        <p>Eso no se puede deshacer, pero sí puedes cuidar las siguientes: límpialas aquí antes de enviarlas, o desactiva la ubicación en los ajustes de la cámara de tu móvil.</p>
-      </details>
+    <section class="ancho bloque">
+      <div class="rejilla">
+        <h2 class="revela">Preguntas que seguro te haces</h2>
+        <div>
+          <details class="revela">
+            <summary>¿Mi foto se sube a algún sitio?</summary>
+            <p>No. El programa se descarga en tu navegador y trabaja ahí. Puedes comprobarlo: pulsa <code>F12</code>, abre la pestaña <em>Red</em> y suelta una foto; no sale ninguna petición. Incluso puedes cortar el wifi después de cargar esta página y seguirá funcionando. Lo único que se conecta a internet es el botón del mapa, y solo si tú lo pulsas y aceptas el aviso.</p>
+          </details>
+          <details class="revela">
+            <summary>¿Pierdo calidad en la foto?</summary>
+            <p>No. La imagen no se vuelve a comprimir: se copian tal cual los mismos datos y solo se quitan los bloques de metadatos. En un JPG se conserva únicamente la orientación, para que las fotos hechas en vertical no salgan giradas.</p>
+          </details>
+          <details class="revela">
+            <summary>¿Qué borra exactamente?</summary>
+            <p>La ubicación, el modelo del móvil o cámara, la fecha y hora, los comentarios y los datos de edición que añaden algunos programas (XMP e IPTC).</p>
+          </details>
+          <details class="revela">
+            <summary>¿Qué no hace?</summary>
+            <p>No toca lo que se ve en la foto: si sale tu fachada o la matrícula de un coche, eso sigue ahí. Todavía no funciona con PNG, WebP ni capturas de pantalla. En las HEIC se vacían los datos EXIF y XMP, pero el archivo puede guardar otros datos técnicos que aún no tocamos. Esto es la versión <span class="ver"></span>: está en pruebas y se irá mejorando.</p>
+          </details>
+          <details class="revela">
+            <summary>Ya he mandado fotos con mi ubicación, ¿qué hago?</summary>
+            <p>Eso no se puede deshacer, pero sí puedes cuidar las siguientes: límpialas aquí antes de enviarlas, o desactiva la ubicación en los ajustes de la cámara de tu móvil.</p>
+          </details>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer class="col">
+  <footer class="ancho">
     <div class="fila">
       <img src="icono.svg" alt="">
       <span>foto-sin-rastro <span class="ver"></span></span>
